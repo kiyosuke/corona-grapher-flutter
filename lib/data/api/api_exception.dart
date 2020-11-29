@@ -3,3 +3,4 @@ class ApiException implements Exception {
 
   const ApiException(this.statusCode);
 }
+  

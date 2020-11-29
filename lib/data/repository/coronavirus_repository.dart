@@ -7,6 +7,13 @@ import 'package:covid19grapherflutter/model/latest.dart';
 import 'package:covid19grapherflutter/model/location.dart';
 import 'package:covid19grapherflutter/model/timeline.dart';
 import 'package:covid19grapherflutter/model/timelines.dart';
+import 'package:flutter_riverpod/all.dart';
+
+final repoProvider = Provider<CoronavirusRepository>((ref) {
+  final db = ref.read(dbProvider);
+  final api = ref.read(apiProvider);
+  return CoronavirusRepository(api, db);
+});
 
 class CoronavirusRepository {
   final CoronaviusApi _api;
@@ -36,17 +43,16 @@ class CoronavirusRepository {
 
 extension LocationEntitiesMapper on List<LocationEntity> {
   List<Location> toModels() {
-    return map((e) =>
-        Location(
-            LocationId(e.id),
-            e.country,
-            e.countryCode,
-            e.countryPopulation,
-            e.province,
-            e.lastUpdated,
-            Coordinates(e.latitude, e.longitude),
-            Latest(e.lastConfirmed, e.lastDeaths, e.lastRecovered),
-            null)).toList();
+    return map((e) => Location(
+        LocationId(e.id),
+        e.country,
+        e.countryCode,
+        e.countryPopulation,
+        e.province,
+        e.lastUpdated,
+        Coordinates(e.latitude, e.longitude),
+        Latest(e.lastConfirmed, e.lastDeaths, e.lastRecovered),
+        null)).toList();
   }
 }
 
@@ -84,7 +90,6 @@ extension TimelineMapper on TimelineResponse {
 }
 
 extension LatestDataMaper on LatestData {
-
   Latest toModel() {
     return Latest(confirmed, deaths, recovered);
   }
