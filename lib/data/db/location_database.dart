@@ -3,7 +3,13 @@ import 'dart:collection';
 
 import 'package:covid19grapherflutter/data/api/response/locations_response.dart';
 import 'package:covid19grapherflutter/data/db/entity/location_entity.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:hive/hive.dart';
+
+final dbProvider = Provider<LocationDatabase>((_) {
+  final  box = Hive.box<LocationEntity>('locations');
+  return LocationDatabase(box);
+});
 
 class LocationDatabase {
   final Box<LocationEntity> locationBox;

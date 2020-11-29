@@ -2,49 +2,46 @@ import 'dart:math';
 
 import 'package:covid19grapherflutter/data/repository/coronavirus_repository.dart';
 import 'package:covid19grapherflutter/model/location.dart';
+import 'package:covid19grapherflutter/page/marker_icon_creator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'marker_icon_creator.dart';
+part 'home_state.freezed.dart';
 
-class HomeModel with ChangeNotifier {
+@freezed
+abstract class HomeState with _$HomeState {
+  factory HomeState(Map<Location, Marker> markers) = _HomeState;
+}
+
+final homeProvider = StateNotifierProvider<HomeController>((ref) {
+  return HomeController(ref.read(repoProvider));
+});
+
+class HomeController extends StateNotifier<HomeState> {
   final CoronavirusRepository _repo;
 
-  List<Location> _locations = [];
-
-  List<Location> get locations => _locations;
-
-  Map<Location, Marker> _markers = {};
-
-  Map<Location, Marker> get marker => _markers;
-
-  set locations(List<Location> value) {
-    _locations = value;
-    notifyListeners();
+  HomeController(this._repo) : super(HomeState(Map())) {
+    refresh();
   }
-
-  set markers(Map<Location, Marker> value) {
-    _markers = value;
-    notifyListeners();
-  }
-
-  HomeModel(this._repo);
 
   void refresh() async {
     try {
-      locations = _repo.locations();
-      if (_locations.isEmpty) {
-        await _repo.refreshLocations();
-        locations = _repo.locations();
-      }
-      markers = await _createMarkers(locations);
+      await _repo.refreshLocations();
+      final locations = _repo.locations();
+      state = state.copyWith(markers: await _createMarkers(locations));
     } catch (e, s) {
       print('HomeModel: refresh(e=$e, s=$s)');
     }
   }
 
   Future<Map<Location, Marker>> _createMarkers(List<Location> locations) async {
-    final createFutures = locations.map((data) async {
+    final createFutures = locations
+        .where((element) =>
+            element.coordinates.latitude != null &&
+            element.coordinates.longitude != null)
+        .map((data) async {
       return MapEntry(
           data,
           Marker(

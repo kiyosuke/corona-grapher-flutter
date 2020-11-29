@@ -24,14 +24,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  json_annotation: ^3.0.0
-  http: ^0.12.0+4
-  hive: ^1.4.1+1
-  hive_flutter: ^0.3.0+2
-  provider: 4.0.3
-  google_maps_flutter: ^0.5.28+1
-  location: ^3.0.2
+  json_annotation: ^3.1.1
+  http: ^0.12.2
+  hive: ^1.4.4+1
+  hive_flutter: ^0.3.1
+  google_maps_flutter: ^1.0.6
+  location: ^3.1.0
   intl: ^0.16.1
+  freezed_annotation: ^0.12.0
+  flutter_riverpod: ^0.12.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -40,9 +41,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: ^3.2.0
-  hive_generator: ^0.7.0+2
-  build_runner: ^1.10.0
+  json_serializable: ^3.5.0
+  hive_generator: ^0.8.2
+  build_runner: ^1.10.6
+  freezed: ^0.12.3
 
 
 # For information on the generic Dart part of this file, see the
@@ -87,6 +89,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-dependency_overrides:
-  dartx: ">=0.2.0 <1.0.0"
-  path: ">=1.6.0 <2.0.0"
+#dependency_overrides:
+#  dartx: ">=0.2.0 <1.0.0"
+#  path: ">=1.6.0 <2.0.0"
