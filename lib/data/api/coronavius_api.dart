@@ -3,9 +3,14 @@ import 'dart:convert';
 import 'package:covid19grapherflutter/data/api/response/latest_response.dart';
 import 'package:covid19grapherflutter/data/api/response/location_response.dart';
 import 'package:covid19grapherflutter/data/api/response/locations_response.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:http/http.dart' as http;
 
 import 'api_exception.dart';
+
+final apiProvider = Provider<CoronaviusApi>((_) {
+  return CoronaviusApi();
+});
 
 class CoronaviusApi {
   static const base_url = 'https://coronavirus-tracker-api.herokuapp.com/v2/';

@@ -1,51 +1,42 @@
-import 'package:covid19grapherflutter/data/repository/coronavirus_repository.dart';
 import 'package:covid19grapherflutter/model/location.dart';
-import 'package:covid19grapherflutter/page/home_model.dart';
+import 'package:covid19grapherflutter/page/home_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    final CoronavirusRepository repo = Provider.of(context, listen: false);
-    final HomeModel model = HomeModel(repo);
-    model.refresh();
-
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).primaryColor,
-      body: ChangeNotifierProvider.value(
-        value: model,
-        child: Consumer<HomeModel>(
-          builder: (context, model, child) {
-            return Container(
-                child: GoogleMap(
-                    initialCameraPosition:
-                        CameraPosition(target: LatLng(40.0, 140.0)),
-                    zoomControlsEnabled: false,
-                    myLocationButtonEnabled: false,
-                    markers: model.marker
-                        .map((key, value) =>
-                            MapEntry(key, value.copyWith(onTapParam: () {
-                              showBottomSheet(
-                                  context: context,
-                                  backgroundColor: Colors.transparent,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16)),
-                                  builder: (context2) {
-                                    return _buildBottomSheet(context2, key);
-                                  });
-                            })))
-                        .values
-                        .toSet()));
-          },
-        ),
-      ),
+      body: Consumer(builder: (context2, watch, child) {
+        final state = watch(homeProvider.state);
+        return Container(
+            child: GoogleMap(
+                initialCameraPosition:
+                    CameraPosition(target: LatLng(40.0, 140.0)),
+                zoomControlsEnabled: false,
+                myLocationButtonEnabled: false,
+                markers: state.markers
+                    .map((key, value) =>
+                        MapEntry(key, value.copyWith(onTapParam: () {
+                          showBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                              builder: (context2) {
+                                return _buildBottomSheet(context2, key);
+                              });
+                        })))
+                    .values
+                    .toSet()));
+      }),
     );
   }
 
